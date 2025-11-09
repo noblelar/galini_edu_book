@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ import { Select } from "@/components/ui/select";
 import { Dialog, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar } from "@/components/ui/avatar";
+import { GoogleButton, AppleButton, MicrosoftButton } from "@/components/ui/oauth-buttons";
 import { LocalDB } from "@/lib/booking/storage";
 import { Booking, LessonType, Subject } from "@/lib/booking/types";
 
@@ -50,6 +52,8 @@ function getMonthMatrix(base: Date) {
 }
 
 export default function ManagePage() {
+  const router = useRouter();
+
   const [email, setEmail] = React.useState("");
   const [profile, setProfile] = React.useState(LocalDB.getParentByEmail(email));
   const [onboardingOpen, setOnboardingOpen] = React.useState(false);
@@ -64,10 +68,15 @@ export default function ManagePage() {
   const [tutorFilter, setTutorFilter] = React.useState("any");
   const [selectedSlot, setSelectedSlot] = React.useState("");
   const [bookingsChanged, setBookingsChanged] = React.useState(0);
+  const [tab, setTab] = React.useState<"upcoming" | "past">("upcoming");
+
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [rescheduleOpen, setRescheduleOpen] = React.useState(false);
+  const [rescheduleTarget, setRescheduleTarget] = React.useState<Booking | null>(null);
 
   const hours = 2;
   const rate = lessonType === "one_to_one" ? 30 : 20;
-  const total = rate * hours * (lessonType === "group" ? 1 : 1);
+  const total = rate * hours;
 
   const slots = React.useMemo(() => generateTimeSlots(), []);
 
@@ -86,7 +95,12 @@ export default function ManagePage() {
     setOnboardingOpen(false);
   }
 
-  function createBooking() {
+  function openConfirm() {
+    if (!profile || !selectedDate || !selectedSlot) return;
+    setConfirmOpen(true);
+  }
+
+  function createBookingAndCheckout() {
     if (!profile || !selectedDate || !selectedSlot) return;
     const booking: Omit<Booking, "id" | "createdAt"> = {
       parentId: profile.id,
@@ -103,9 +117,10 @@ export default function ManagePage() {
       meetingLink: `https://meet.lessonsuk.com/${Math.random().toString(36).slice(2, 8)}`,
       status: "upcoming",
     };
-    LocalDB.addBooking(profile.id, booking);
+    const created = LocalDB.addBooking(profile.id, booking);
     setBookingsChanged((n) => n + 1);
-    alert("Booking confirmed");
+    setConfirmOpen(false);
+    router.push(`/checkout?booking=${encodeURIComponent(created.id)}`);
   }
 
   const bookings = profile ? LocalDB.listBookings(profile.id) : [];
@@ -118,24 +133,43 @@ export default function ManagePage() {
     return diff > 24 * 60 * 60 * 1000; // 24h
   }
 
+  function startReschedule(b: Booking) {
+    setRescheduleTarget(b);
+    setSelectedDate(b.date);
+    setSelectedSlot(b.slot);
+    setRescheduleOpen(true);
+  }
+  function applyReschedule() {
+    if (!rescheduleTarget || !selectedDate || !selectedSlot) return;
+    LocalDB.updateBooking(rescheduleTarget.id, { date: selectedDate, slot: selectedSlot, status: "rescheduled" });
+    setRescheduleOpen(false);
+    setBookingsChanged((n) => n + 1);
+  }
+
   return (
     <div className="min-h-screen bg-white px-6 py-10 dark:bg-black lg:px-16">
       <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-3">
-        {/* Left: Tutor / session details */}
+        {/* Left: Account & session details */}
         <Card>
           <CardHeader>
             <CardTitle>Parent Account</CardTitle>
             <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">Sign in or onboard to manage bookings.</p>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
+            <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" className="mt-2" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Input id="email" className="mt-1" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <div className="flex gap-2">
+                <Button onClick={ensureProfile} disabled={!email}>Continue</Button>
+                <Button variant="outline" disabled={!email}>Reset password</Button>
+              </div>
             </div>
-            <Button onClick={ensureProfile} disabled={!email}>Continue</Button>
-            <div className="pt-2 text-xs text-zinc-600 dark:text-zinc-400">
-              Social sign-in requires connecting Supabase OAuth (Google, Apple, Microsoft).
+            <div className="grid gap-2">
+              <GoogleButton />
+              <AppleButton />
+              <MicrosoftButton />
             </div>
+
             {profile && (
               <div className="mt-4 flex items-center gap-3">
                 <Avatar name={profile.name || profile.email} />
@@ -259,7 +293,7 @@ export default function ManagePage() {
             )}
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button onClick={createBooking} disabled={!profile || !selectedDate || !selectedSlot}>Confirm</Button>
+            <Button onClick={openConfirm} disabled={!profile || !selectedDate || !selectedSlot}>Confirm</Button>
           </CardFooter>
         </Card>
       </div>
@@ -268,10 +302,10 @@ export default function ManagePage() {
       <div className="mx-auto mt-8 max-w-7xl">
         <Tabs>
           <TabsList>
-            <TabsTrigger active>Upcoming</TabsTrigger>
-            <TabsTrigger>Past</TabsTrigger>
+            <TabsTrigger active={tab === "upcoming"} onClick={() => setTab("upcoming")}>Upcoming</TabsTrigger>
+            <TabsTrigger active={tab === "past"} onClick={() => setTab("past")}>Past</TabsTrigger>
           </TabsList>
-          <TabsContent>
+          <TabsContent hidden={tab !== "upcoming"}>
             <div className="mt-4 grid gap-4 lg:grid-cols-2">
               {upcoming.length === 0 && (
                 <Card><CardContent className="p-6 text-sm text-zinc-600 dark:text-zinc-400">No upcoming lessons.</CardContent></Card>
@@ -288,7 +322,7 @@ export default function ManagePage() {
                       )}
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => setSelectedDate(b.date)}>Reschedule</Button>
+                      <Button variant="outline" size="sm" onClick={() => startReschedule(b)}>Reschedule</Button>
                       <Button variant="outline" size="sm" disabled={!canCancel(b)} onClick={() => { LocalDB.cancelBooking(b.id); setBookingsChanged((n) => n + 1); }}>Cancel</Button>
                     </div>
                   </CardContent>
@@ -296,7 +330,7 @@ export default function ManagePage() {
               ))}
             </div>
           </TabsContent>
-          <TabsContent hidden>
+          <TabsContent hidden={tab !== "past"}>
             <div className="mt-4 grid gap-4 lg:grid-cols-2">
               {past.length === 0 && (
                 <Card><CardContent className="p-6 text-sm text-zinc-600 dark:text-zinc-400">No past lessons.</CardContent></Card>
@@ -339,6 +373,49 @@ export default function ManagePage() {
         </div>
         <DialogFooter>
           <Button onClick={completeOnboarding} disabled={!name || !childName || !schoolYear}>Save</Button>
+        </DialogFooter>
+      </Dialog>
+
+      {/* Booking confirmation */}
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogHeader>
+          <DialogTitle>Confirm your booking</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
+          <p>Date: <span className="font-medium">{selectedDate}</span></p>
+          <p>Time: <span className="font-medium">{selectedSlot}</span></p>
+          <p>Subject: <span className="font-medium">{subject}</span></p>
+          <p>Type: <span className="font-medium">{lessonType === "one_to_one" ? "1:1" : "Group"}</span></p>
+          <p>Total: <span className="font-medium">{pounds(total)}</span></p>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setConfirmOpen(false)}>Back</Button>
+          <Button onClick={createBookingAndCheckout}>Proceed to checkout</Button>
+        </DialogFooter>
+      </Dialog>
+
+      {/* Reschedule dialog */}
+      <Dialog open={rescheduleOpen} onOpenChange={setRescheduleOpen}>
+        <DialogHeader>
+          <DialogTitle>Reschedule lesson</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div>
+            <Label>Date</Label>
+            <Input type="date" className="mt-2" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+          </div>
+          <div>
+            <Label>Time slot</Label>
+            <Select className="mt-2" value={selectedSlot} onChange={(e) => setSelectedSlot(e.target.value)}>
+              {slots.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </Select>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setRescheduleOpen(false)}>Cancel</Button>
+          <Button onClick={applyReschedule} disabled={!selectedDate || !selectedSlot}>Apply</Button>
         </DialogFooter>
       </Dialog>
     </div>
