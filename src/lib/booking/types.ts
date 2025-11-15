@@ -4,6 +4,8 @@ export type UserRole = "admin" | "tutor" | "parent" | "student";
 export type BookingStatus = "pending" | "confirmed" | "completed" | "cancelled" | "rescheduled";
 export type TutorStatus = "pending" | "approved" | "rejected";
 export type PaymentStatus = "pending" | "completed" | "failed" | "refunded";
+export type AnnouncementAudience = "all" | "group" | "student";
+export type AttendanceStatus = "present" | "absent" | "excused";
 
 export interface User {
   id: string;
