@@ -113,3 +113,97 @@ export interface SubjectConfig {
   recommendedDuration: number;
   createdAt: string;
 }
+
+export interface LessonNote {
+  id: string;
+  bookingId: string;
+  tutorId: string;
+  content: string;
+  attendance: AttendanceStatus;
+  topics: string[];
+  homework?: string;
+  createdAt: string;
+}
+
+export interface Announcement {
+  id: string;
+  tutorId: string;
+  title: string;
+  content: string;
+  audience: AnnouncementAudience;
+  targetStudentId?: string;
+  targetGroupId?: string;
+  attachments?: string[];
+  publishDate?: string;
+  createdAt: string;
+}
+
+export interface LessonMaterial {
+  id: string;
+  tutorId: string;
+  name: string;
+  description?: string;
+  fileUrl: string;
+  fileType: string;
+  category?: string;
+  assignedTo?: string[];
+  assignedToLesson?: string[];
+  createdAt: string;
+}
+
+export interface Message {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderRole: UserRole;
+  recipientId: string;
+  content: string;
+  attachments?: string[];
+  readAt?: string;
+  createdAt: string;
+}
+
+export interface Conversation {
+  id: string;
+  tutorId: string;
+  participantId: string;
+  participantRole: "parent" | "student";
+  participantName: string;
+  lastMessage?: string;
+  lastMessageAt?: string;
+  unreadCount: number;
+  createdAt: string;
+}
+
+export interface TutorAvailability {
+  id: string;
+  tutorId: string;
+  dayOfWeek: string;
+  startTime: string;
+  endTime: string;
+  recurring: boolean;
+  blockedDates?: string[];
+  createdAt: string;
+}
+
+export interface TutorEarnings {
+  id: string;
+  tutorId: string;
+  bookingId: string;
+  studentName: string;
+  lessonType: LessonType;
+  amount: number;
+  rate: number;
+  status: "paid" | "unpaid";
+  paidAt?: string;
+  createdAt: string;
+}
+
+export interface TutorPayoutSetting {
+  id: string;
+  tutorId: string;
+  stripeAccountId?: string;
+  bankDetails?: string;
+  payoutSchedule: "weekly" | "monthly" | "on-demand";
+  updatedAt: string;
+}
