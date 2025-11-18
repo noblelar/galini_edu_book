@@ -121,6 +121,7 @@ export const LocalDB = {
       email: profile.email,
       childName: profile.childName,
       schoolYear: profile.schoolYear,
+      password: profile.password,
       verified: !!profile.verified,
       createdAt: new Date().toISOString(),
     };
