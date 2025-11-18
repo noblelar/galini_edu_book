@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useState, useSearchParams } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { StudentDB, StudentMaterial } from "@/lib/booking/student-storage";
+import { useSearchParams } from "next/navigation";
 
 type CategoryType = "worksheet" | "video" | "pdf" | "presentation" | "image" | "document" | "assignment";
 
