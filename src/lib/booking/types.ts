@@ -26,6 +26,7 @@ export interface ParentProfile {
   name: string;
   childName: string;
   schoolYear: string;
+  password?: string;
   verified: boolean;
   createdAt: string;
 }
