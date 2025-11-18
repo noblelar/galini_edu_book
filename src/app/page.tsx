@@ -197,46 +197,81 @@ export default function Home() {
 
       <section className="px-6 py-20 lg:px-16 lg:py-32">
         <div className="mx-auto max-w-7xl">
-          <h2 className="text-center text-4xl font-bold text-black dark:text-white">
-            How It Works
-          </h2>
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-black dark:text-white">
+              Your Learning Journey
+            </h2>
+            <p className="mt-3 text-lg leading-7 text-zinc-600 dark:text-zinc-400">
+              Start learning in just 3 simple steps
+            </p>
+          </div>
 
-          <div className="mt-16 grid gap-12 lg:grid-cols-3">
-            <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-[#570DF8]/10">
-                <span className="text-xl font-bold text-[#570DF8]">1</span>
+          <div className="mt-16 grid gap-8 lg:grid-cols-3">
+            <div className="rounded-xl border border-zinc-200 bg-white/50 p-8 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/20">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#4586F7] to-[#570DF8]">
+                  <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">Step 1</div>
+                  <h3 className="text-lg font-bold text-black dark:text-white">
+                    Create Your Account
+                  </h3>
+                </div>
               </div>
-              <h3 className="mt-6 text-lg font-bold text-black dark:text-white">
-                Choose Your Lesson
-              </h3>
-              <p className="mt-3 text-base leading-6 text-zinc-600 dark:text-zinc-400">
-                Select between one-on-one tutoring or group classes that fit your needs and budget.
+              <p className="mt-4 text-base leading-6 text-zinc-600 dark:text-zinc-400">
+                Sign up with your email and provide basic information about your child and their educational needs.
               </p>
             </div>
 
-            <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-[#4586F7]/10">
-                <span className="text-xl font-bold text-[#4586F7]">2</span>
+            <div className="rounded-xl border border-zinc-200 bg-white/50 p-8 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/20">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#4586F7] to-[#570DF8]">
+                  <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">Step 2</div>
+                  <h3 className="text-lg font-bold text-black dark:text-white">
+                    Book Your Lesson
+                  </h3>
+                </div>
               </div>
-              <h3 className="mt-6 text-lg font-bold text-black dark:text-white">
-                Pick Your Time
-              </h3>
-              <p className="mt-3 text-base leading-6 text-zinc-600 dark:text-zinc-400">
-                Choose from available 2-hour time slots that work for your schedule.
+              <p className="mt-4 text-base leading-6 text-zinc-600 dark:text-zinc-400">
+                Choose your preferred lesson type (one-on-one or group), subject, and available time slot from our calendar.
               </p>
             </div>
 
-            <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-[#570DF8]/10">
-                <span className="text-xl font-bold text-[#570DF8]">3</span>
+            <div className="rounded-xl border border-zinc-200 bg-white/50 p-8 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/20">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#4586F7] to-[#570DF8]">
+                  <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">Step 3</div>
+                  <h3 className="text-lg font-bold text-black dark:text-white">
+                    Start Learning
+                  </h3>
+                </div>
               </div>
-              <h3 className="mt-6 text-lg font-bold text-black dark:text-white">
-                Start Learning
-              </h3>
-              <p className="mt-3 text-base leading-6 text-zinc-600 dark:text-zinc-400">
-                Connect with your tutor and begin your journey to educational success.
+              <p className="mt-4 text-base leading-6 text-zinc-600 dark:text-zinc-400">
+                Connect with your expert tutor via your meeting link and start your 2-hour session with personalized attention.
               </p>
             </div>
+          </div>
+
+          <div className="mt-12 flex justify-center">
+            <Link
+              href="/signup"
+              className="inline-flex h-14 items-center justify-center rounded-lg bg-[#570DF8] px-10 text-base font-semibold text-white transition-colors hover:bg-[#4506b8]"
+            >
+              Get Started Today
+            </Link>
           </div>
         </div>
       </section>
