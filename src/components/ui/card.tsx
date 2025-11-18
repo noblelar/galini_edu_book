@@ -21,6 +21,10 @@ export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHead
   return <h3 className={cn("text-lg font-semibold", className)} {...props} />;
 }
 
+export function CardDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
+  return <p className={cn("mt-1 text-sm text-zinc-600 dark:text-zinc-400", className)} {...props} />;
+}
+
 export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("p-6 pt-0", className)} {...props} />;
 }
