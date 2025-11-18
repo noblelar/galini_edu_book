@@ -18,12 +18,23 @@ export default function Home() {
             <Link href="/manage" className="text-sm font-medium text-black dark:text-white">
               Manage
             </Link>
-            <Link
-              href="/book"
-              className="rounded-lg bg-[#570DF8] px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-[#4506b8]"
-            >
-              Book Now
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link href="/login" className="text-sm font-medium text-black transition-colors hover:text-[#570DF8] dark:text-white dark:hover:text-[#4586F7]">
+                Sign In
+              </Link>
+              <Link
+                href="/signup"
+                className="rounded-lg bg-[#570DF8] px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-[#4506b8]"
+              >
+                Sign Up
+              </Link>
+              <Link
+                href="/book"
+                className="rounded-lg border border-[#570DF8] px-6 py-2 text-sm font-medium text-[#570DF8] transition-colors hover:bg-[#570DF8]/10"
+              >
+                Book Now
+              </Link>
+            </div>
           </nav>
         </div>
       </header>
