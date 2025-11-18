@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "LessonsUK - Expert Tutoring for UK Students",
-  description: "Quality education delivered one lesson at a time. Choose between personalized one-on-one lessons or group classes tailored to your learning pace.",
+  description:
+    "Quality education delivered one lesson at a time. Choose between personalized one-on-one lessons or group classes tailored to your learning pace.",
 };
 
 export default function RootLayout({
@@ -23,9 +24,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning={true}
       >
         {children}
       </body>
