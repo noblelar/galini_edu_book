@@ -128,10 +128,11 @@ export interface LessonNote {
 
 export interface Announcement {
   id: string;
-  tutorId: string;
+  tutorId?: string;
+  createdBy: "admin" | "tutor";
   title: string;
   content: string;
-  audience: AnnouncementAudience;
+  audience: "tutors" | "students" | "parents" | "all";
   targetStudentId?: string;
   targetGroupId?: string;
   attachments?: string[];
