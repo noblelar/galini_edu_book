@@ -11,6 +11,7 @@ const USERS_KEY = "lessonsuk.users";
 const TUTORS_KEY = "lessonsuk.tutors";
 const PAYMENTS_KEY = "lessonsuk.payments";
 const SUBJECTS_KEY = "lessonsuk.subjects";
+const ANNOUNCEMENTS_KEY = "lessonsuk.announcements";
 
 function read<T>(key: string): T[] {
   if (typeof window === "undefined") return [] as T[];
