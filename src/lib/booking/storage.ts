@@ -1,5 +1,5 @@
 "use client";
-import { Booking, ParentProfile, User, Tutor, Payment, SubjectConfig } from "./types";
+import { Booking, ParentProfile, User, Tutor, Payment, SubjectConfig, Announcement } from "./types";
 
 function id(prefix: string) {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
