@@ -1,5 +1,5 @@
 "use client";
-import { Booking, ParentProfile, User, Tutor, Payment, SubjectConfig } from "./types";
+import { Booking, ParentProfile, User, Tutor, Payment, SubjectConfig, Announcement } from "./types";
 
 function id(prefix: string) {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
@@ -11,6 +11,7 @@ const USERS_KEY = "lessonsuk.users";
 const TUTORS_KEY = "lessonsuk.tutors";
 const PAYMENTS_KEY = "lessonsuk.payments";
 const SUBJECTS_KEY = "lessonsuk.subjects";
+const ANNOUNCEMENTS_KEY = "lessonsuk.announcements";
 
 function read<T>(key: string): T[] {
   if (typeof window === "undefined") return [] as T[];
@@ -245,5 +246,39 @@ export const LocalDB = {
       ] as any;
       defaultSubjects.forEach((s) => this.createSubject(s as any));
     }
+  },
+
+  // Announcements
+  createAnnouncement(announcement: Omit<Announcement, "id" | "createdAt">): Announcement {
+    const announcements = read<Announcement>(ANNOUNCEMENTS_KEY);
+    const created: Announcement = {
+      ...announcement,
+      id: id("ann"),
+      createdAt: new Date().toISOString(),
+    };
+    announcements.push(created);
+    write(ANNOUNCEMENTS_KEY, announcements);
+    return created;
+  },
+  getAnnouncement(id: string): Announcement | null {
+    return read<Announcement>(ANNOUNCEMENTS_KEY).find((a) => a.id === id) || null;
+  },
+  getAllAnnouncements(): Announcement[] {
+    return read<Announcement>(ANNOUNCEMENTS_KEY);
+  },
+  updateAnnouncement(id: string, patch: Partial<Announcement>): Announcement | null {
+    const announcements = read<Announcement>(ANNOUNCEMENTS_KEY);
+    const announcement = announcements.find((a) => a.id === id);
+    if (!announcement) return null;
+    const updated = { ...announcement, ...patch } as Announcement;
+    write(ANNOUNCEMENTS_KEY, announcements.map((a) => (a.id === id ? updated : a)));
+    return updated;
+  },
+  deleteAnnouncement(id: string): boolean {
+    const announcements = read<Announcement>(ANNOUNCEMENTS_KEY);
+    const filtered = announcements.filter((a) => a.id !== id);
+    if (filtered.length === announcements.length) return false;
+    write(ANNOUNCEMENTS_KEY, filtered);
+    return true;
   },
 };
